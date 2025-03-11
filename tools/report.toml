@@ -145,16 +145,16 @@ expected = [
 ]
 
 [[reports]]
-id = "eserde"
+id = "epserde"
 title = "ε-serde"
-link = "eserde"
+link = "epserde"
 description = [
-    "This is a test suite for ε-serde features, which currently only supports JSON decoding.",
+    "This is a test suite for ε-serde features",
 ]
 features = [
     "musli-json",
     "serde_json",
-    "eserde",
+    "epserde",
 ]
 expected = [
     "musli",

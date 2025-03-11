@@ -21,6 +21,9 @@ use musli_zerocopy::ZeroCopy;
 #[cfg(feature = "zerocopy")]
 use zerocopy::{FromBytes, Immutable, IntoBytes};
 
+#[cfg(feature = "epserde")]
+use epserde::Epserde;
+
 #[cfg(feature = "musli")]
 use musli::{Decode, Encode};
 #[cfg(feature = "serde")]
@@ -55,6 +58,9 @@ miri! {
     derive(miniserde::Serialize, miniserde::Deserialize)
 )]
 #[cfg_attr(feature = "speedy", derive(speedy::Writable, speedy::Readable))]
+#[cfg_attr(feature = "epserde", derive(Epserde))]
+#[cfg_attr(feature = "epserde", repr(C))]
+#[cfg_attr(feature = "epserde", zero_copy)]
 pub struct PrimitivesPacked {
     unsigned8: u8,
     #[cfg_attr(feature = "musli", musli(bytes))]
@@ -100,7 +106,6 @@ impl PartialEq<PrimitivesPacked> for &PrimitivesPacked {
 #[derive(Debug, Clone, PartialEq, Generate)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "epserde", derive(epserde::Deserialize))]
 #[cfg_attr(feature = "musli", derive(Encode, Decode), musli(mode = Packed, packed))]
 #[cfg_attr(feature = "musli-zerocopy", derive(ZeroCopy))]
 #[cfg_attr(feature = "bitcode-derive", derive(bitcode::Encode, bitcode::Decode))]
@@ -115,6 +120,9 @@ impl PartialEq<PrimitivesPacked> for &PrimitivesPacked {
     derive(miniserde::Serialize, miniserde::Deserialize)
 )]
 #[cfg_attr(feature = "speedy", derive(speedy::Writable, speedy::Readable))]
+#[cfg_attr(feature = "epserde", derive(Copy, Epserde))]
+#[cfg_attr(feature = "epserde", repr(C))]
+#[cfg_attr(feature = "epserde", zero_copy)]
 pub struct Primitives {
     boolean: bool,
     #[cfg(not(feature = "no-char"))]
@@ -159,7 +167,6 @@ impl PartialEq<Primitives> for &Primitives {
 #[derive(Debug, Clone, PartialEq, Generate)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "epserde", derive(epserde::deser::Deserialize))]
 #[cfg_attr(feature = "musli", derive(Encode, Decode), musli(mode = Packed, packed))]
 #[cfg_attr(feature = "bitcode-derive", derive(bitcode::Encode, bitcode::Decode))]
 #[cfg_attr(
@@ -274,7 +281,6 @@ impl PartialEq<Tuples> for &Tuples {
 #[derive(Debug, Clone, PartialEq, Generate)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "epserde", derive(epserde::deser::Deserialize))]
 #[cfg_attr(feature = "musli", derive(Encode, Decode), musli(mode = Packed))]
 #[cfg_attr(feature = "bitcode-derive", derive(bitcode::Encode, bitcode::Decode))]
 #[cfg_attr(
@@ -339,7 +345,6 @@ impl PartialEq<MediumEnum> for &MediumEnum {
 #[derive(Debug, Clone, PartialEq, Generate)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "epserde", derive(epserde::deser::Deserialize))]
 #[cfg_attr(feature = "musli", derive(Encode, Decode), musli(mode = Packed, packed))]
 #[cfg_attr(feature = "bitcode-derive", derive(bitcode::Encode, bitcode::Decode))]
 #[cfg_attr(
@@ -406,7 +411,6 @@ impl PartialEq<LargeStruct> for &LargeStruct {
 #[derive(Debug, Clone, PartialEq, Generate)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "epserde", derive(epserde::deser::Deserialize))]
 #[cfg_attr(feature = "musli", derive(Encode, Decode), musli(mode = Packed, packed))]
 #[cfg_attr(feature = "bitcode-derive", derive(bitcode::Encode, bitcode::Decode))]
 #[cfg_attr(
@@ -419,8 +423,9 @@ impl PartialEq<LargeStruct> for &LargeStruct {
     derive(miniserde::Serialize, miniserde::Deserialize)
 )]
 #[cfg_attr(feature = "speedy", derive(speedy::Writable, speedy::Readable))]
-pub struct Mesh {
-    pub triangles: Vec<Triangle>,
+#[cfg_attr(feature = "epserde", derive(Epserde))]
+pub struct Mesh<V: AsRef<[Triangle]> = Vec<Triangle>> {
+    pub triangles: V,
 }
 
 #[cfg(feature = "rkyv")]
@@ -434,7 +439,6 @@ impl PartialEq<Mesh> for &ArchivedMesh {
 #[derive(Debug, Clone, Copy, PartialEq, Generate)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "epserde", derive(epserde::deser::Deserialize))]
 #[cfg_attr(feature = "musli", derive(Encode, Decode), musli(mode = Packed, packed))]
 #[cfg_attr(feature = "bitcode-derive", derive(bitcode::Encode, bitcode::Decode))]
 #[cfg_attr(
@@ -447,6 +451,9 @@ impl PartialEq<Mesh> for &ArchivedMesh {
     derive(miniserde::Serialize, miniserde::Deserialize)
 )]
 #[cfg_attr(feature = "speedy", derive(speedy::Writable, speedy::Readable))]
+#[cfg_attr(feature = "epserde", derive(Epserde))]
+#[cfg_attr(feature = "epserde", repr(C))]
+#[cfg_attr(feature = "epserde", zero_copy)]
 pub struct Triangle {
     pub v0: Vec3,
     pub v1: Vec3,
@@ -457,7 +464,6 @@ pub struct Triangle {
 #[derive(Debug, Clone, Copy, PartialEq, Generate)]
 #[cfg_attr(feature = "serde", derive(Serialize))]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(feature = "epserde", derive(epserde::deser::Deserialize))]
 #[cfg_attr(feature = "musli", derive(Encode, Decode), musli(mode = Packed, packed))]
 #[cfg_attr(feature = "bitcode-derive", derive(bitcode::Encode, bitcode::Decode))]
 #[cfg_attr(
@@ -470,6 +476,9 @@ pub struct Triangle {
     derive(miniserde::Serialize, miniserde::Deserialize)
 )]
 #[cfg_attr(feature = "speedy", derive(speedy::Writable, speedy::Readable))]
+#[cfg_attr(feature = "epserde", derive(Epserde))]
+#[cfg_attr(feature = "epserde", repr(C))]
+#[cfg_attr(feature = "epserde", zero_copy)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,

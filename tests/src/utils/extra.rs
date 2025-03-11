@@ -226,37 +226,27 @@ pub mod speedy {
     }
 }
 
-#[cfg(feature = "eserde_json")]
+#[cfg(feature = "epserde")]
 #[crate::benchmarker]
-pub mod eserde_json {
+pub mod epserde {
     use alloc::vec::Vec;
-
-    use eserde::{DeserializationErrors, EDeserialize};
-    use serde::Serialize;
-
-    pub fn buffer() -> Vec<u8> {
-        Vec::with_capacity(4096)
-    }
-
-    pub fn reset(buf: &mut Vec<u8>) {
-        buf.clear();
-    }
+    use epserde::{deser::{DeserType, Deserialize}, ser::Serialize};
 
     pub fn encode<'buf, T>(
         buf: &'buf mut Vec<u8>,
         value: &T,
-    ) -> Result<&'buf [u8], serde_json::Error>
+    ) -> Result<&'buf [u8], epserde::ser::Error>
     where
         T: Serialize,
     {
-        serde_json::to_writer(&mut *buf, value)?;
-        Ok(buf)
+        value.serialize(buf).map(|size| &buf[..size])
     }
 
-    pub fn decode<'buf, T>(buf: &'buf [u8]) -> Result<T, DeserializationErrors>
+    pub fn decode<T>(mut buf: &[u8]) -> Result<DeserType<'_, T>, epserde::deser::Error>
     where
-        T: EDeserialize<'buf>,
+        T: Deserialize,
     {
-        eserde::json::from_slice(buf)
+        T::deserialize_eps(&mut buf)
     }
 }
+

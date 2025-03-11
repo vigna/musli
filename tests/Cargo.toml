@@ -20,7 +20,7 @@ harness = false
 
 [features]
 default = ["std", "alloc"]
-std = ["musli?/std", "serde?/std", "musli-zerocopy?/std", "rand/std", "serde_json?/std", "rkyv?/std", "miniserde?/std"]
+std = ["musli?/std", "serde?/std", "musli-zerocopy?/std", "rand/std", "serde_json?/std", "rkyv?/std", "miniserde?/std", "epserde?/std"]
 alloc = ["musli?/alloc", "musli-zerocopy?/alloc"]
 verbose = ["musli?/verbose"]
 extra = ["rkyv", "dlhn", "serde_cbor"]

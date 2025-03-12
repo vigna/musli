@@ -253,10 +253,10 @@ pub mod epserde {
         value.serialize(buf).map(|size| &buf[..size])
     }
 
-    pub fn decode<T>(mut buf: &[u8]) -> Result<DeserType<'_, T>, epserde::deser::Error>
+    pub fn decode<T>(buf: &[u8]) -> Result<DeserType<'_, T>, epserde::deser::Error>
     where
         T: Deserialize,
     {
-        T::deserialize_eps(&mut buf)
+        T::deserialize_eps(buf)
     }
 }

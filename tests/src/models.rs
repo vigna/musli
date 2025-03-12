@@ -423,7 +423,13 @@ impl PartialEq<LargeStruct> for &LargeStruct {
     derive(miniserde::Serialize, miniserde::Deserialize)
 )]
 #[cfg_attr(feature = "speedy", derive(speedy::Writable, speedy::Readable))]
+#[cfg(not(feature ="epserde"))]
+pub struct Mesh {
+    pub triangles: Vec<Triangle>,
+}
+#[cfg(feature ="epserde")]
 #[cfg_attr(feature = "epserde", derive(Epserde))]
+#[derive(Debug, Clone, PartialEq, Generate)]
 pub struct Mesh<V: AsRef<[Triangle]> = Vec<Triangle>> {
     pub triangles: V,
 }

@@ -104,8 +104,6 @@ macro_rules! if_supported {
 
     (epserde, primitives, $($tt:tt)*) => {};
     (epserde, large, $($tt:tt)*) => {};
-    (epserde, allocated, $($tt:tt)*) => {};
-    (epserde, medium_enum, $($tt:tt)*) => {};
     (epserde, mesh, $($tt:tt)*) => {};
 
     ($framework:ident, $test:ident, $($tt:tt)*) => { $($tt)* };

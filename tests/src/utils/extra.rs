@@ -230,7 +230,18 @@ pub mod speedy {
 #[crate::benchmarker]
 pub mod epserde {
     use alloc::vec::Vec;
-    use epserde::{deser::{DeserType, Deserialize}, ser::Serialize};
+    use epserde::{
+        deser::{DeserType, Deserialize},
+        ser::Serialize,
+    };
+
+    pub fn buffer() -> Vec<u8> {
+        Vec::with_capacity(1 << 20)
+    }
+
+    pub fn reset(buf: &mut Vec<u8>) {
+        buf.clear();
+    }
 
     pub fn encode<'buf, T>(
         buf: &'buf mut Vec<u8>,
@@ -249,4 +260,3 @@ pub mod epserde {
         T::deserialize_eps(&mut buf)
     }
 }
-

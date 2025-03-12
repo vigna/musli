@@ -66,7 +66,7 @@ macro_rules! feature_matrix {
         #[cfg(feature = "zerocopy")]
         $call!(zerocopy $(, $($tt)*)*);
         #[cfg(feature = "epserde")]
-        $call!(zerocopy $(, $($tt)*)*);
+        $call!(epserde $(, $($tt)*)*);
         #[cfg(feature = "dlhn")]
         $call!(serde_dlhn $(, $($tt)*)*);
         #[cfg(feature = "serde_cbor")]
